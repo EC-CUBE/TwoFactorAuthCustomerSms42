@@ -16,7 +16,7 @@
 <div class="card rounded border-0 mb-4" id="two_factor_auth_sms_setting">
     <div class="card-header">
         <div class="row">
-            <div class="col-8"><span class="card-title">SMS認証情報</span>
+            <div class="col-8"><span class="card-title">{{ 'admin.customer.2fa.sms.title'|trans }}</span>
             </div>
             <div class="col-4 text-end">
                 <a data-bs-toggle="collapse" href="#ordererInfo"
@@ -30,7 +30,7 @@
         <div class="card-body">
             <div class="row mb-2">
                 <div class="col-3">
-                    <span>2段階認証時の電話番号</span>
+                    <span>{{ 'admin.customer.2fa.sms.authed_phone_number'|trans }}</span>
                 </div>
                 <div class="col">
                     {{ form_widget(form.two_factor_authed_phone_number) }}
