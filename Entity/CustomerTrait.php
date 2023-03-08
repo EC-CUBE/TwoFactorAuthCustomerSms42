@@ -15,14 +15,14 @@ trait CustomerTrait
      *
      * @ORM\Column(name="two_factor_authed_phone_number", type="string", length=14, nullable=true)
      */
-    private ?string $two_factor_authed_phone_number;
+    private ?string $two_factor_authed_phone_number = null;
 
     /**
      * @var ?string
      *
      * @ORM\Column(name="two_factor_auth_one_time_token", type="string", length=10, nullable=true)
      */
-    private ?string $two_factor_auth_one_time_token;
+    private ?string $two_factor_auth_one_time_token = null;
 
     /**
      * @var \DateTime|null
