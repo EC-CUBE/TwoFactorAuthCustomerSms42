@@ -15,7 +15,7 @@ trait CustomerTrait
      *
      * @ORM\Column(name="two_factor_authed_phone_number", type="string", length=14, nullable=true)
      */
-    private $two_factor_authed_phone_number;
+    private ?string $two_factor_authed_phone_number;
 
     /**
      * @var ?string
@@ -31,7 +31,6 @@ trait CustomerTrait
      */
     private $two_factor_auth_one_time_token_expire;
 
-
     /**
      * @return string
      */
@@ -43,7 +42,7 @@ trait CustomerTrait
     /**
      * @param string $two_factor_authed_phone_number
      */
-    public function setTwoFactorAuthedPhoneNumber(string $two_factor_authed_phone_number): void
+    public function setTwoFactorAuthedPhoneNumber(?string $two_factor_authed_phone_number): void
     {
         $this->two_factor_authed_phone_number = $two_factor_authed_phone_number;
     }
@@ -58,11 +57,12 @@ trait CustomerTrait
         // TODO: なんちゃって
         $token = '';
         for ($i = 0; $i < 6; $i++) {
-            $token .= (string)rand(0, 9);
+            $token .= (string) rand(0, 9);
         }
 
         $this->setTwoFactorAuthOneTimeToken($token);
         $this->setTwoFactorAuthOneTimeTokenExpire($now->modify('+5 mins'));
+
         return $token;
     }
 
@@ -105,5 +105,4 @@ trait CustomerTrait
     {
         return $this->two_factor_auth_one_time_token_expire;
     }
-
 }
