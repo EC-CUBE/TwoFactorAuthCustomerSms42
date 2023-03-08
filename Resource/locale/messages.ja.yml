@@ -1,3 +1,6 @@
+admin.customer.2fa.sms.title: SMS認証情報
+admin.customer.2fa.sms.authed_phone_number: 2段階認証電話番号
+
 front.2fa.sms.resend.message: |
   末尾%phoneの携帯電話に認証コードを送信します。
   [認証コードを送信]をクリックしてください。

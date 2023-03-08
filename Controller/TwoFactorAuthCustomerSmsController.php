@@ -22,7 +22,7 @@ class TwoFactorAuthCustomerSmsController extends TwoFactorAuthCustomerController
      */
     public function inputPhoneNumber(Request $request) 
     {
-        if ($this->isAuth()) {
+        if ($this->isTwoFactorAuthed()) {
             return $this->redirectToRoute($this->getCallbackRoute());
         }
 
@@ -86,7 +86,7 @@ class TwoFactorAuthCustomerSmsController extends TwoFactorAuthCustomerController
      */
     public function inputToken(Request $request) 
     {
-        if ($this->isAuth()) {
+        if ($this->isTwoFactorAuthed()) {
             return $this->redirectToRoute($this->getCallbackRoute());
         }
 
