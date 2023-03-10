@@ -1,5 +1,16 @@
 <?php
 
+/*
+ * This file is part of EC-CUBE
+ *
+ * Copyright(c) EC-CUBE CO.,LTD. All Rights Reserved.
+ *
+ * http://www.ec-cube.co.jp/
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace Plugin\TwoFactorAuthCustomerSms42\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
@@ -48,22 +59,16 @@ trait CustomerTrait
     }
 
     /**
-     * @return string
+     * @param string $hashedOneTimePassword
+     * @return void
      */
-    public function createTwoFactorAuthOneTimeToken(): ?string
+    public function createTwoFactorAuthOneTimeToken(string $hashedOneTimePassword): void
     {
         $now = new \DateTime();
 
-        // TODO: なんちゃって
-        $token = '';
-        for ($i = 0; $i < 6; $i++) {
-            $token .= (string) rand(0, 9);
-        }
-
-        $this->setTwoFactorAuthOneTimeToken($token);
+        // ワンタイムパスワードをハッシュする
+        $this->setTwoFactorAuthOneTimeToken($hashedOneTimePassword);
         $this->setTwoFactorAuthOneTimeTokenExpire($now->modify('+5 mins'));
-
-        return $token;
     }
 
     /**

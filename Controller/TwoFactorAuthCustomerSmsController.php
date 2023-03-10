@@ -47,7 +47,11 @@ class TwoFactorAuthCustomerSmsController extends TwoFactorAuthCustomerController
 
         // デバイス認証済み電話番号が設定済みの場合は優先して利用
         $phoneNumber = ($Customer->getDeviceAuthedPhoneNumber() != null ? $Customer->getDeviceAuthedPhoneNumber() : $Customer->getTwoFactorAuthedPhoneNumber());
-
+        if (!empty($phoneNumber) && $request->request->has('phone_number') === false) {
+            $data = $request->request->get('plg_customer_2fa');
+            $data['phone_number'] = $phoneNumber;
+            $request->request->set('plg_customer_2fa', $data);
+        }
         if ('POST' === $request->getMethod()) {
             $form->handleRequest($request);
             if ($form->isSubmitted() && $form->isValid()) {
@@ -65,6 +69,7 @@ class TwoFactorAuthCustomerSmsController extends TwoFactorAuthCustomerController
                     CustomerTwoFactorAuthService::SESSION_AUTHED_PHONE_NUMBER,
                     $phoneNumber
                 );
+
                 return $response;
             } else {
                 $error = trans('front.2fa.sms.send.failure_message');
@@ -146,7 +151,8 @@ class TwoFactorAuthCustomerSmsController extends TwoFactorAuthCustomerController
     private function sendToken($Customer, $phoneNumber)
     {
         // ワンタイムトークン生成・保存
-        $token = $Customer->createTwoFactorAuthOneTimeToken();
+        $token = $this->generateOneTimeToken();
+        $Customer->createTwoFactorAuthOneTimeToken($this->hashOneTimeToken($token));
         $this->entityManager->persist($Customer);
         $this->entityManager->flush();
 
@@ -166,10 +172,12 @@ class TwoFactorAuthCustomerSmsController extends TwoFactorAuthCustomerController
      *
      * @return boolean
      */
-    private function checkToken($Customer, $token)
+    private function checkToken(Customer $Customer, $token): bool
     {
         $now = new \DateTime();
-        if ($Customer->getTwoFactorAuthOneTimeToken() !== $token
+
+        // フォームからのハッシュしたワンタイムパスワードとDBに保存しているワンタイムパスワードのハッシュは一致しているかどうか
+        if ($Customer->getTwoFactorAuthOneTimeToken() !== $this->readOneTimeToken($token)
             || $Customer->getTwoFactorAuthOneTimeTokenExpire() < $now) {
             return false;
         }
