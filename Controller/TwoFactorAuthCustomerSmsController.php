@@ -1,26 +1,37 @@
 <?php
 
+/*
+ * This file is part of EC-CUBE
+ *
+ * Copyright(c) EC-CUBE CO.,LTD. All Rights Reserved.
+ *
+ * http://www.ec-cube.co.jp/
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace Plugin\TwoFactorAuthCustomerSms42\Controller;
 
+use Eccube\Entity\Customer;
 use Plugin\TwoFactorAuthCustomer42\Controller\TwoFactorAuthCustomerController;
-use Plugin\TwoFactorAuthCustomer42\Form\Type\TwoFactorAuthSmsTypeCustomer;
 use Plugin\TwoFactorAuthCustomer42\Form\Type\TwoFactorAuthPhoneNumberTypeCustomer;
+use Plugin\TwoFactorAuthCustomer42\Form\Type\TwoFactorAuthSmsTypeCustomer;
 use Plugin\TwoFactorAuthCustomer42\Service\CustomerTwoFactorAuthService;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 
-
 class TwoFactorAuthCustomerSmsController extends TwoFactorAuthCustomerController
 {
-
     /**
      * SMS認証 送信先入力画面.
+     *
      * @Route("/two_factor_auth/tfa/sms/send_onetime", name="plg_customer_2fa_sms_send_onetime", methods={"GET", "POST"})
      * @Template("TwoFactorAuthCustomerSms42/Resource/template/default/tfa/sms/send.twig")
      */
-    public function inputPhoneNumber(Request $request) 
+    public function inputPhoneNumber(Request $request)
     {
         if ($this->isTwoFactorAuthed()) {
             return $this->redirectToRoute($this->getCallbackRoute());
@@ -39,35 +50,24 @@ class TwoFactorAuthCustomerSmsController extends TwoFactorAuthCustomerController
 
         if ('POST' === $request->getMethod()) {
             $form->handleRequest($request);
-            if ($form->isSubmitted()) {
-                if ($Customer->isTwoFactorAuth() && $phoneNumber) {
-                    // 初回認証済み
-                    // 前回送信した電話番号へワンタイムコードを送信
-                    $this->sendToken($Customer, $phoneNumber);
-                    $response = new RedirectResponse($this->generateUrl('plg_customer_2fa_sms_input_onetime'));
-                    // 送信電話番号をセッションへ一時格納
-                    $this->session->set(
-                        CustomerTwoFactorAuthService::SESSION_AUTHED_PHONE_NUMBER, 
-                        $phoneNumber
-                    );
-                    return $response;
-                } else {
+            if ($form->isSubmitted() && $form->isValid()) {
+                if ($Customer->getTwoFactorAuthType() === null || !$phoneNumber) {
                     // 初回認証時
-                    if ($form->isValid()) {
-                        $phoneNumber = $form->get('phone_number')->getData();
-                        // 入力された電話番号へワンタイムコードを送信
-                        $this->sendToken($Customer, $phoneNumber);
-                        $response = new RedirectResponse($this->generateUrl('plg_customer_2fa_sms_input_onetime'));
-                        // 送信電話番号をセッションへ一時格納
-                        $this->session->set(
-                            CustomerTwoFactorAuthService::SESSION_AUTHED_PHONE_NUMBER, 
-                            $phoneNumber
-                        );
-                        return $response;
-                    } else {
-                        $error = trans('front.2fa.sms.send.failure_message');
-                    }
+                    $phoneNumber = $form->get('phone_number')->getData();
                 }
+                // 入力された電話番号へワンタイムコードを送信
+                $this->sendToken($Customer, $phoneNumber);
+
+                $response = new RedirectResponse($this->generateUrl('plg_customer_2fa_sms_input_onetime'));
+
+                // 送信電話番号をセッションへ一時格納
+                $this->session->set(
+                    CustomerTwoFactorAuthService::SESSION_AUTHED_PHONE_NUMBER,
+                    $phoneNumber
+                );
+                return $response;
+            } else {
+                $error = trans('front.2fa.sms.send.failure_message');
             }
         }
 
@@ -81,10 +81,11 @@ class TwoFactorAuthCustomerSmsController extends TwoFactorAuthCustomerController
 
     /**
      * SMS認証 ワンタイムトークン入力画面.
+     *
      * @Route("/two_factor_auth/tfa/sms/input_onetime", name="plg_customer_2fa_sms_input_onetime", methods={"GET", "POST"})
      * @Template("TwoFactorAuthCustomerSms42/Resource/template/default/tfa/sms/input.twig")
      */
-    public function inputToken(Request $request) 
+    public function inputToken(Request $request)
     {
         if ($this->isTwoFactorAuthed()) {
             return $this->redirectToRoute($this->getCallbackRoute());
@@ -118,10 +119,11 @@ class TwoFactorAuthCustomerSmsController extends TwoFactorAuthCustomerController
                     $response = new RedirectResponse($this->generateUrl($this->getCallbackRoute()));
                     $response->headers->setCookie(
                         $this->customerTwoFactorAuthService->createAuthedCookie(
-                            $Customer, 
+                            $Customer,
                             $this->getCallbackRoute()
                         )
                     );
+
                     return $response;
                 }
             } else {
@@ -138,12 +140,11 @@ class TwoFactorAuthCustomerSmsController extends TwoFactorAuthCustomerController
 
     /**
      * ワンタイムトークンを送信.
-     * 
+     *
      * @param \Eccube\Entity\Customer $Customer
-     * @param string $phoneNumber 
-     * 
+     * @param string $phoneNumber
      */
-    private function sendToken($Customer, $phoneNumber) 
+    private function sendToken($Customer, $phoneNumber)
     {
         // ワンタイムトークン生成・保存
         $token = $Customer->createTwoFactorAuthOneTimeToken();
@@ -152,7 +153,7 @@ class TwoFactorAuthCustomerSmsController extends TwoFactorAuthCustomerController
 
         // ワンタイムトークン送信メッセージをレンダリング
         $twig = 'TwoFactorAuthCustomer42/Resource/template/default/sms/onetime_message.twig';
-        $body = $this->twig->render($twig , [
+        $body = $this->twig->render($twig, [
             'Customer' => $Customer,
             'token' => $token,
         ]);
@@ -163,17 +164,17 @@ class TwoFactorAuthCustomerSmsController extends TwoFactorAuthCustomerController
 
     /**
      * ワンタイムトークンチェック.
-     * 
+     *
      * @return boolean
      */
     private function checkToken($Customer, $token)
     {
         $now = new \DateTime();
-        if ($Customer->getTwoFactorAuthOneTimeToken() !== $token 
+        if ($Customer->getTwoFactorAuthOneTimeToken() !== $token
             || $Customer->getTwoFactorAuthOneTimeTokenExpire() < $now) {
             return false;
         }
+
         return true;
     }
-
 }
