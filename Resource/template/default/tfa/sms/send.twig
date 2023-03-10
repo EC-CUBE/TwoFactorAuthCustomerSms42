@@ -29,7 +29,7 @@ file that was distributed with this source code.
                         <div class="ec-login__icon">
                             <div class="ec-icon"><img src="{{ asset('assets/icon/user.svg') }}" alt=""></div>
                         </div>
-                        {% if Customer.two_factor_auth == false or phoneNumber == null %}
+                        {% if Customer.TwoFactorAuthType == null or phoneNumber == null %}
                         <p>{{ 'front.2fa.sms.send.message'|trans }}</p>
                         <div class="ec-login__input">
                             <div class="ec-input">
