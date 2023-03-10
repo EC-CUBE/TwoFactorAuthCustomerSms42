@@ -111,7 +111,6 @@ class TwoFactorAuthCustomerSmsController extends TwoFactorAuthCustomerController
                     $phoneNumber = $this->session->get(CustomerTwoFactorAuthService::SESSION_AUTHED_PHONE_NUMBER);
                     // ワンタイムトークン一致
                     // 二段階認証完了
-                    $Customer->setTwoFactorAuth(true);
                     $Customer->setTwoFactorAuthedPhoneNumber($phoneNumber);
                     $this->entityManager->persist($Customer);
                     $this->entityManager->flush();
