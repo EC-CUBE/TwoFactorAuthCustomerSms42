@@ -31,7 +31,7 @@ trait CustomerTrait
     /**
      * @var ?string
      *
-     * @ORM\Column(name="two_factor_auth_one_time_token", type="string", length=10, nullable=true)
+     * @ORM\Column(name="two_factor_auth_one_time_token", type="string", length=255, nullable=true)
      */
     private ?string $two_factor_auth_one_time_token = null;
 
