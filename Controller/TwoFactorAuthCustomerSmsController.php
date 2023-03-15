@@ -18,10 +18,9 @@ use Plugin\TwoFactorAuthCustomer42\Controller\TwoFactorAuthCustomerController;
 use Plugin\TwoFactorAuthCustomer42\Form\Type\TwoFactorAuthPhoneNumberTypeCustomer;
 use Plugin\TwoFactorAuthCustomer42\Form\Type\TwoFactorAuthSmsTypeCustomer;
 use Plugin\TwoFactorAuthCustomer42\Service\CustomerTwoFactorAuthService;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
-use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Routing\Annotation\Route;
 
 class TwoFactorAuthCustomerSmsController extends TwoFactorAuthCustomerController
 {
