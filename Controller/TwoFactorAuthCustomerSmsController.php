@@ -151,8 +151,8 @@ class TwoFactorAuthCustomerSmsController extends TwoFactorAuthCustomerController
     private function sendToken($Customer, $phoneNumber)
     {
         // ワンタイムトークン生成・保存
-        $token = $this->generateOneTimeToken();
-        $Customer->createTwoFactorAuthOneTimeToken($this->hashOneTimeToken($token));
+        $token = $this->customerTwoFactorAuthService->generateOneTimeToken();
+        $Customer->createTwoFactorAuthOneTimeToken($this->customerTwoFactorAuthService->hashOneTimeToken($token));
         $this->entityManager->persist($Customer);
         $this->entityManager->flush();
 
@@ -177,7 +177,7 @@ class TwoFactorAuthCustomerSmsController extends TwoFactorAuthCustomerController
         $now = new \DateTime();
 
         // フォームからのハッシュしたワンタイムパスワードとDBに保存しているワンタイムパスワードのハッシュは一致しているかどうか
-        if ($Customer->getTwoFactorAuthOneTimeToken() !== $this->readOneTimeToken($token)
+        if ($Customer->getTwoFactorAuthOneTimeToken() !== $this->customerTwoFactorAuthService->readOneTimeToken($token)
             || $Customer->getTwoFactorAuthOneTimeTokenExpire() < $now) {
             return false;
         }
