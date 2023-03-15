@@ -61,7 +61,7 @@ class TwoFactorAuthCustomerSmsController extends TwoFactorAuthCustomerController
                 // 入力された電話番号へワンタイムコードを送信
                 $this->sendToken($Customer, $phoneNumber);
 
-                $response = new RedirectResponse($this->generateUrl('plg_customer_2fa_sms_input_onetime'));
+                $response = $this->redirectToRoute('plg_customer_2fa_sms_input_onetime');
 
                 // 送信電話番号をセッションへ一時格納
                 $this->session->set(
@@ -117,7 +117,7 @@ class TwoFactorAuthCustomerSmsController extends TwoFactorAuthCustomerController
                     $this->entityManager->persist($Customer);
                     $this->entityManager->flush();
 
-                    $response = new RedirectResponse($this->generateUrl($this->getCallbackRoute()));
+                    $response = $this->redirectToRoute($this->getCallbackRoute());
                     $response->headers->setCookie(
                         $this->customerTwoFactorAuthService->createAuthedCookie(
                             $Customer,
