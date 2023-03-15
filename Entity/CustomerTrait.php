@@ -1,5 +1,16 @@
 <?php
 
+/*
+ * This file is part of EC-CUBE
+ *
+ * Copyright(c) EC-CUBE CO.,LTD. All Rights Reserved.
+ *
+ * http://www.ec-cube.co.jp/
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace Plugin\TwoFactorAuthCustomerSms42\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
@@ -15,14 +26,14 @@ trait CustomerTrait
      *
      * @ORM\Column(name="two_factor_authed_phone_number", type="string", length=14, nullable=true)
      */
-    private $two_factor_authed_phone_number;
+    private ?string $two_factor_authed_phone_number = null;
 
     /**
      * @var ?string
      *
-     * @ORM\Column(name="two_factor_auth_one_time_token", type="string", length=10, nullable=true)
+     * @ORM\Column(name="two_factor_auth_one_time_token", type="string", length=255, nullable=true)
      */
-    private ?string $two_factor_auth_one_time_token;
+    private ?string $two_factor_auth_one_time_token = null;
 
     /**
      * @var \DateTime|null
@@ -30,7 +41,6 @@ trait CustomerTrait
      * @ORM\Column(name="two_factor_auth_one_time_token_expire", type="datetimetz", nullable=true)
      */
     private $two_factor_auth_one_time_token_expire;
-
 
     /**
      * @return string
@@ -43,27 +53,22 @@ trait CustomerTrait
     /**
      * @param string $two_factor_authed_phone_number
      */
-    public function setTwoFactorAuthedPhoneNumber(string $two_factor_authed_phone_number): void
+    public function setTwoFactorAuthedPhoneNumber(?string $two_factor_authed_phone_number): void
     {
         $this->two_factor_authed_phone_number = $two_factor_authed_phone_number;
     }
 
     /**
-     * @return string
+     * @param string $hashedOneTimePassword
+     * @return void
      */
-    public function createTwoFactorAuthOneTimeToken(): ?string
+    public function createTwoFactorAuthOneTimeToken(string $hashedOneTimePassword): void
     {
         $now = new \DateTime();
 
-        // TODO: なんちゃって
-        $token = '';
-        for ($i = 0; $i < 6; $i++) {
-            $token .= (string)rand(0, 9);
-        }
-
-        $this->setTwoFactorAuthOneTimeToken($token);
+        // ワンタイムパスワードをハッシュする
+        $this->setTwoFactorAuthOneTimeToken($hashedOneTimePassword);
         $this->setTwoFactorAuthOneTimeTokenExpire($now->modify('+5 mins'));
-        return $token;
     }
 
     /**
@@ -105,5 +110,4 @@ trait CustomerTrait
     {
         return $this->two_factor_auth_one_time_token_expire;
     }
-
 }
