@@ -1,14 +1,13 @@
 {
-  "name": "ec-cube/twofactorauthcustomersms42",
-  "version": "1.0.0",
-  "description": "2 factor authentication for Customers(SMS) EC-CUBE42",
-  "type": "eccube-plugin",
-  "extra": {
-    "code": "TwoFactorAuthCustomerSms42"
-  },
-  "require": {
-    "ec-cube/plugin-installer": "^2.0",
-    "TwoFactorAuthCustomer42": "^1.0",
-    "twilio/sdk": "^6.43"
-  }
+    "name": "ec-cube/twofactorauthcustomersms42",
+    "version": "1.0.0",
+    "description": "2 factor authentication for Customers(SMS) EC-CUBE42",
+    "type": "eccube-plugin",
+    "extra": {
+        "code": "TwoFactorAuthCustomerSms42"
+    },
+    "require": {
+        "ec-cube/plugin-installer": "^2.0",
+        "ec-cube/twofactorauthcustomer42": "*"
+    }
 }
