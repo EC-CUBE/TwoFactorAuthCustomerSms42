@@ -41,7 +41,6 @@ class TwoFactorAuthCustomerSmsController extends TwoFactorAuthCustomerController
         /** @var Customer $Customer */
         $Customer = $this->getUser();
         $builder = $this->formFactory->createBuilder(TwoFactorAuthPhoneNumberTypeCustomer::class);
-        $form = null;
         // 入力フォーム生成
         $form = $builder->getForm();
 
@@ -100,14 +99,12 @@ class TwoFactorAuthCustomerSmsController extends TwoFactorAuthCustomerController
         /** @var Customer $Customer */
         $Customer = $this->getUser();
         $builder = $this->formFactory->createBuilder(TwoFactorAuthSmsTypeCustomer::class);
-        $form = null;
-        $auth_key = null;
         // 入力フォーム生成
         $form = $builder->getForm();
         if ('POST' === $request->getMethod()) {
             $form->handleRequest($request);
-            $token = $form->get('one_time_token')->getData();
             if ($form->isSubmitted() && $form->isValid()) {
+                $token = $form->get('one_time_token')->getData();
                 if (!$this->checkToken($Customer, $token)) {
                     // ワンタイムトークン不一致 or 有効期限切れ
                     $error = trans('front.2fa.onetime.invalid_message__reinput');
