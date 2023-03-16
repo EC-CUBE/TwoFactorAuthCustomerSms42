@@ -30,8 +30,8 @@ class PluginManager extends AbstractPluginManager
 {
     // 設定対象ページ情報
     private $pages = [
-        ['plg_customer_2fa_sms_send_onetime', 'SMS認証送信先入力', 'TwoFactorAuthCustomer42/Resource/template/default/tfa/sms/send_onetime'],
-        ['plg_customer_2fa_sms_input_onetime', 'SMS認証トークン入力', 'TwoFactorAuthCustomer42/Resource/template/default/tfa/sms/input_onetime'],
+        ['plg_customer_2fa_sms_send_onetime', 'SMS認証送信先入力', 'TwoFactorAuthCustomer42/Resource/template/default/tfa/sms/send'],
+        ['plg_customer_2fa_sms_input_onetime', 'SMS認証トークン入力', 'TwoFactorAuthCustomer42/Resource/template/default/tfa/sms/input'],
     ];
 
     /**
