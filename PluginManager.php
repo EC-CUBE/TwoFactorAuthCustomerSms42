@@ -161,7 +161,7 @@ class PluginManager extends AbstractPluginManager
     {
         foreach ($this->pages as $p) {
             $Page = $em->getRepository(Page::class)->findOneBy(['url' => $p[0]]);
-            if (!empty($Page)) {
+            if ($Page !== null) {
                 $Layout = $em->getRepository(Layout::class)->find(Layout::DEFAULT_LAYOUT_UNDERLAYER_PAGE);
                 $PageLayout = $em->getRepository(PageLayout::class)->findOneBy(['Page' => $Page, 'Layout' => $Layout]);
 
@@ -213,7 +213,7 @@ class PluginManager extends AbstractPluginManager
         /** @var TwoFactorAuthType|null $TwoFactorAuthType */
         $TwoFactorAuthType = $em->getRepository(TwoFactorAuthType::class)->findOneBy(['name' => 'SMS']);
 
-        // SNSオプションがあれば、そのオプションを無効にする
+        // SMSオプションがあれば、そのオプションを無効にする
         if (!empty($TwoFactorAuthType)) {
             $TwoFactorAuthType->setIsDisabled(true);
             $em->persist($TwoFactorAuthType);
