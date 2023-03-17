@@ -160,7 +160,7 @@ class TwoFactorAuthCustomerSmsController extends TwoFactorAuthCustomerController
         ]);
 
         // SMS送信
-        return $this->customerTwoFactorAuthService->sendBySms($Customer, $phoneNumber, $body);
+        return $this->customerTwoFactorAuthService->sendBySms($phoneNumber, $body);
     }
 
     /**
