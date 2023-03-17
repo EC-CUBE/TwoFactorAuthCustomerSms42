@@ -28,56 +28,12 @@ use Twig\Environment;
 class Event implements EventSubscriberInterface
 {
     /**
-     * @var ContainerInterface
-     */
-    protected $container;
-
-    /**
-     * @var BaseInfo
-     */
-    protected $BaseInfo;
-
-    /**
-     * @var CustomerTwoFactorAuthService
-     */
-    protected $customerTwoFactorAuthService;
-
-    /**
-     * @var EntityManagerInterface
-     */
-    private $entityManager;
-
-    /**
-     * @var Environment
-     */
-    private $twig;
-
-    /**
-     * @var NotifierInterface
-     */
-    // private $notifier;
-
-    /**
      * Event constructor.
      *
-     * @param ContainerInterface $container
-     * @param BaseInfoRepository $baseInfoRepository
-     * @param EntityManagerInterface $entityManager
-     * @param CustomerTwoFactorAuthService $customerTwoFactorAuthService
-     * @param Environment $twig
      */
-    public function __construct(
-        ContainerInterface $container,
-        BaseInfoRepository $baseInfoRepository,
-        EntityManagerInterface $entityManager,
-        CustomerTwoFactorAuthService $customerTwoFactorAuthService,
-        Environment $twig
-    ) {
-        $this->container = $container;
-        $this->BaseInfo = $baseInfoRepository->get();
-        $this->entityManager = $entityManager;
-        $this->customerTwoFactorAuthService = $customerTwoFactorAuthService;
-        $this->twig = $twig;
+    public function __construct()
+    {
+
     }
 
     public static function getSubscribedEvents(): array

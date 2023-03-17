@@ -147,6 +147,8 @@ class TwoFactorAuthCustomerSmsController extends TwoFactorAuthCustomerController
     /**
      * ワンタイムトークンチェック.
      *
+     * @param Customer $Customer
+     * @param $token
      * @return boolean
      */
     private function checkToken(Customer $Customer, $token): bool
