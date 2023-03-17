@@ -21,6 +21,12 @@ use Plugin\TwoFactorAuthCustomer42\Service\CustomerTwoFactorAuthService;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
+use Twig\Error\LoaderError;
+use Twig\Error\RuntimeError;
+use Twig\Error\SyntaxError;
+use Twilio\Exceptions\ConfigurationException;
+use Twilio\Exceptions\TwilioException;
+use Twilio\Rest\Api\V2010\Account\MessageInstance;
 
 class TwoFactorAuthCustomerSmsController extends TwoFactorAuthCustomerController
 {
@@ -139,10 +145,34 @@ class TwoFactorAuthCustomerSmsController extends TwoFactorAuthCustomerController
     }
 
     /**
+     * ワンタイムトークンチェック.
+     *
+     * @return boolean
+     */
+    private function checkToken(Customer $Customer, $token): bool
+    {
+        $now = new \DateTime();
+
+        // フォームからのハッシュしたワンタイムパスワードとDBに保存しているワンタイムパスワードのハッシュは一致しているかどうか
+        if ($Customer->getTwoFactorAuthOneTimeToken() !== $this->customerTwoFactorAuthService->readOneTimeToken($token)
+            || $Customer->getTwoFactorAuthOneTimeTokenExpire() < $now) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
      * ワンタイムトークンを送信.
      *
-     * @param \Eccube\Entity\Customer $Customer
+     * @param Customer $Customer
      * @param string $phoneNumber
+     * @return MessageInstance
+     * @throws LoaderError
+     * @throws RuntimeError
+     * @throws SyntaxError
+     * @throws ConfigurationException
+     * @throws TwilioException
      */
     private function sendToken($Customer, $phoneNumber)
     {
@@ -163,21 +193,4 @@ class TwoFactorAuthCustomerSmsController extends TwoFactorAuthCustomerController
         return $this->customerTwoFactorAuthService->sendBySms($phoneNumber, $body);
     }
 
-    /**
-     * ワンタイムトークンチェック.
-     *
-     * @return boolean
-     */
-    private function checkToken(Customer $Customer, $token): bool
-    {
-        $now = new \DateTime();
-
-        // フォームからのハッシュしたワンタイムパスワードとDBに保存しているワンタイムパスワードのハッシュは一致しているかどうか
-        if ($Customer->getTwoFactorAuthOneTimeToken() !== $this->customerTwoFactorAuthService->readOneTimeToken($token)
-            || $Customer->getTwoFactorAuthOneTimeTokenExpire() < $now) {
-            return false;
-        }
-
-        return true;
-    }
 }

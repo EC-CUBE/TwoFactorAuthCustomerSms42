@@ -51,7 +51,7 @@ trait CustomerTrait
     }
 
     /**
-     * @param string $two_factor_authed_phone_number
+     * @param string|null $two_factor_authed_phone_number
      */
     public function setTwoFactorAuthedPhoneNumber(?string $two_factor_authed_phone_number): void
     {
@@ -60,6 +60,7 @@ trait CustomerTrait
 
     /**
      * @param string $hashedOneTimePassword
+     *
      * @return void
      */
     public function createTwoFactorAuthOneTimeToken(string $hashedOneTimePassword): void
@@ -80,25 +81,11 @@ trait CustomerTrait
     }
 
     /**
-     * @param string $two_factor_auth_one_time_token
+     * @param string|null $two_factor_auth_one_time_token
      */
     public function setTwoFactorAuthOneTimeToken(?string $two_factor_auth_one_time_token): void
     {
         $this->two_factor_auth_one_time_token = $two_factor_auth_one_time_token;
-    }
-
-    /**
-     * Set oneTimeTokenExpire.
-     *
-     * @param \DateTime|null $resetExpire
-     *
-     * @return Customer
-     */
-    public function setTwoFactorAuthOneTimeTokenExpire($deviceAuthOneTimeTokenExpire = null)
-    {
-        $this->two_factor_auth_one_time_token_expire = $deviceAuthOneTimeTokenExpire;
-
-        return $this;
     }
 
     /**
@@ -109,5 +96,18 @@ trait CustomerTrait
     public function getTwoFactorAuthOneTimeTokenExpire()
     {
         return $this->two_factor_auth_one_time_token_expire;
+    }
+
+    /**
+     * Set oneTimeTokenExpire.
+     *
+     * @param null $deviceAuthOneTimeTokenExpire
+     * @return Customer
+     */
+    public function setTwoFactorAuthOneTimeTokenExpire($deviceAuthOneTimeTokenExpire = null)
+    {
+        $this->two_factor_auth_one_time_token_expire = $deviceAuthOneTimeTokenExpire;
+
+        return $this;
     }
 }
