@@ -88,6 +88,33 @@ class PluginManager extends AbstractPluginManager
     }
 
     /**
+     * 設定の登録.
+     *
+     * @param EntityManagerInterface $em
+     */
+    protected function createConfig(EntityManagerInterface $em)
+    {
+        /** @var TwoFactorAuthType $TwoFactorAuthType */
+        $TwoFactorAuthType = $em->getRepository(TwoFactorAuthType::class)->findOneBy(['name' => 'SMS']);
+        if (!$TwoFactorAuthType) {
+            // レコードを保存
+            $TwoFactorAuthType = new TwoFactorAuthType();
+            $TwoFactorAuthType
+                ->setName('SMS')
+                ->setRoute('plg_customer_2fa_sms_send_onetime');
+        } else {
+            // 無効の状態から有効に変更する
+            $TwoFactorAuthType->setIsDisabled(false);
+        }
+        $em->persist($TwoFactorAuthType);
+
+        // 除外ルートの登録
+        $TwoFactorAuthConfig = $em->find(TwoFactorAuthConfig::class, 1);
+        $em->persist($TwoFactorAuthConfig);
+        $em->flush();
+    }
+
+    /**
      * Twigファイルの登録
      *
      * @param ContainerInterface $container
@@ -115,7 +142,7 @@ class PluginManager extends AbstractPluginManager
         foreach ($this->pages as $p) {
             $Page = $em->getRepository(Page::class)->findOneBy(['url' => $p[0]]);
             if (!$Page) {
-                /** @var \Eccube\Entity\Page $Page */
+                /** @var Page $Page */
                 $Page = $em->getRepository(Page::class)->newPage();
                 $Page->setEditType(Page::EDIT_TYPE_DEFAULT);
                 $Page->setUrl($p[0]);
@@ -137,6 +164,27 @@ class PluginManager extends AbstractPluginManager
                 $em->flush();
             }
         }
+    }
+
+    /**
+     * ２段階認証設定を消す
+     *
+     * @param EntityManagerInterface $em
+     *
+     * @return void
+     */
+    protected function removeConfig(EntityManagerInterface $em)
+    {
+        /** @var TwoFactorAuthType|null $TwoFactorAuthType */
+        $TwoFactorAuthType = $em->getRepository(TwoFactorAuthType::class)->findOneBy(['name' => 'SMS']);
+
+        // SNSオプションがあれば、そのオプションを無効にする
+        if (!empty($TwoFactorAuthType)) {
+            $TwoFactorAuthType->setIsDisabled(true);
+            $em->persist($TwoFactorAuthType);
+        }
+
+        $em->flush();
     }
 
     /**
@@ -170,55 +218,5 @@ class PluginManager extends AbstractPluginManager
                 $em->flush();
             }
         }
-    }
-
-    /**
-     * 設定の登録.
-     *
-     * @param EntityManagerInterface $em
-     */
-    protected function createConfig(EntityManagerInterface $em)
-    {
-        /** @var TwoFactorAuthType $TwoFactorAuthType */
-        $TwoFactorAuthType = $em->getRepository(TwoFactorAuthType::class)->findOneBy(['name' => 'SMS']);
-        if (!$TwoFactorAuthType) {
-            // レコードを保存
-            $TwoFactorAuthType = new TwoFactorAuthType();
-            $TwoFactorAuthType
-                ->setName('SMS')
-                ->setRoute('plg_customer_2fa_sms_send_onetime')
-            ;
-        } else {
-            // 無効の状態から有効に変更する
-            $TwoFactorAuthType->setIsDisabled(false);
-        }
-        $em->persist($TwoFactorAuthType);
-
-        // 除外ルートの登録
-        $TwoFactorAuthConfig = $em->find(TwoFactorAuthConfig::class, 1);
-        $em->persist($TwoFactorAuthConfig);
-        $em->flush();
-
-        return;
-    }
-
-    /**
-     * ２段階認証設定を消す
-     *
-     * @param EntityManagerInterface $em
-     * @return void
-     */
-    protected function removeConfig(EntityManagerInterface $em)
-    {
-        /** @var TwoFactorAuthType|null $TwoFactorAuthType */
-        $TwoFactorAuthType = $em->getRepository(TwoFactorAuthType::class)->findOneBy(['name' => 'SMS']);
-
-        // SNSオプションがあれば、そのオプションを無効にする
-        if (!empty($TwoFactorAuthType)) {
-            $TwoFactorAuthType->setIsDisabled(true);
-            $em->persist($TwoFactorAuthType);
-        }
-
-        $em->flush();
     }
 }
