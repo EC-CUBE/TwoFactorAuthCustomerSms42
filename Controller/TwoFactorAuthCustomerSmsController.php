@@ -33,7 +33,7 @@ class TwoFactorAuthCustomerSmsController extends TwoFactorAuthCustomerController
     /**
      * SMS認証 送信先入力画面.
      *
-     * @Route("/two_factor_auth/tfa/sms/send_onetime", name="plg_customer_2fa_sms_send_onetime", methods={"GET", "POST"})
+     * @Route("/mypage/two_factor_auth/tfa/sms/send_onetime", name="plg_customer_2fa_sms_send_onetime", methods={"GET", "POST"})
      * @Template("TwoFactorAuthCustomerSms42/Resource/template/default/tfa/sms/send.twig")
      */
     public function inputPhoneNumber(Request $request)
@@ -91,7 +91,7 @@ class TwoFactorAuthCustomerSmsController extends TwoFactorAuthCustomerController
     /**
      * SMS認証 ワンタイムトークン入力画面.
      *
-     * @Route("/two_factor_auth/tfa/sms/input_onetime", name="plg_customer_2fa_sms_input_onetime", methods={"GET", "POST"})
+     * @Route("/mypage/two_factor_auth/tfa/sms/input_onetime", name="plg_customer_2fa_sms_input_onetime", methods={"GET", "POST"})
      * @Template("TwoFactorAuthCustomerSms42/Resource/template/default/tfa/sms/input.twig")
      */
     public function inputToken(Request $request)
