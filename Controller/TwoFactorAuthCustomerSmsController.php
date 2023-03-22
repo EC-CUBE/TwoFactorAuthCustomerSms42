@@ -50,11 +50,11 @@ class TwoFactorAuthCustomerSmsController extends TwoFactorAuthCustomerController
         $form = $builder->getForm();
 
         // デバイス認証済み電話番号が設定済みの場合は優先して利用
-        $phoneNumber = ($Customer->getDeviceAuthedPhoneNumber() != null ? $Customer->getDeviceAuthedPhoneNumber() : $Customer->getTwoFactorAuthedPhoneNumber());
-        if (!empty($phoneNumber) && $request->request->has('phone_number') === false) {
-            $data = $request->request->get('plg_customer_2fa');
-            $data['phone_number'] = $phoneNumber;
-            $request->request->set('plg_customer_2fa', $data);
+        $phoneNumber = ($Customer->getDeviceAuthedPhoneNumber() !== null)
+            ? $Customer->getDeviceAuthedPhoneNumber()
+            : $Customer->getTwoFactorAuthedPhoneNumber();
+        if (!empty($phoneNumber)) {
+            $form->remove('phone_number');
         }
         if ('POST' === $request->getMethod()) {
             $form->handleRequest($request);
