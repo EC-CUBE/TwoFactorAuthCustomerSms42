@@ -59,20 +59,6 @@ trait CustomerTrait
     }
 
     /**
-     * @param string $hashedOneTimePassword
-     *
-     * @return void
-     */
-    public function createTwoFactorAuthOneTimeToken(string $hashedOneTimePassword): void
-    {
-        $now = new \DateTime();
-
-        // ワンタイムパスワードをハッシュする
-        $this->setTwoFactorAuthOneTimeToken($hashedOneTimePassword);
-        $this->setTwoFactorAuthOneTimeTokenExpire($now->modify('+5 mins'));
-    }
-
-    /**
      * @return string
      */
     public function getTwoFactorAuthOneTimeToken(): ?string
