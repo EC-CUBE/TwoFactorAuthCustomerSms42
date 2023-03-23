@@ -31,11 +31,6 @@ use Twilio\Rest\Api\V2010\Account\MessageInstance;
 class TwoFactorAuthCustomerSmsController extends TwoFactorAuthCustomerController
 {
     /**
-     * ワンタイムトークンの桁数
-     */
-    public const TOKEN_LENGTH = 6;
-
-    /**
      * SMS認証 送信先入力画面.
      *
      * @Route("/mypage/two_factor_auth/tfa/sms/send_onetime", name="plg_customer_2fa_sms_send_onetime", methods={"GET", "POST"})
@@ -188,9 +183,7 @@ class TwoFactorAuthCustomerSmsController extends TwoFactorAuthCustomerController
     private function sendToken($Customer, $phoneNumber)
     {
         // ワンタイムトークン生成・保存
-        $token = $this->customerTwoFactorAuthService->generateOneTimeTokenValue(
-            self::TOKEN_LENGTH
-        );
+        $token = $this->customerTwoFactorAuthService->generateOneTimeTokenValue();
 
         $Customer->setTwoFactorAuthOneTimeToken($this->customerTwoFactorAuthService->hashOneTimeToken($token));
         $Customer->setTwoFactorAuthOneTimeTokenExpire($this->customerTwoFactorAuthService->generateExpiryDate(
