@@ -1,6 +1,6 @@
 eccube:
   rate_limiter:
-    sms_send_onetime_request:
+    plg_customer_2fa_sms_send_onetime:
       # 実行するルーティングを指定します。
       route: plg_customer_2fa_sms_send_onetime
       # 実行するmethodを指定します。デフォルトはPOSTです。
