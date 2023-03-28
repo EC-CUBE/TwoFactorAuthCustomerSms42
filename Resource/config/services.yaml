@@ -8,7 +8,7 @@ eccube:
       # スロットリングの制御方法を設定します。ip・customerを指定できます。
       type: [ 'ip', 'customer' ]
       # 試行回数を設定します。
-      limit: 30
+      limit: 5
       # インターバルを設定します。
       interval: '30 minutes'
 
