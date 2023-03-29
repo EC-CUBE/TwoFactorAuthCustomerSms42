@@ -183,14 +183,10 @@ class TwoFactorAuthCustomerSmsController extends TwoFactorAuthCustomerController
     private function sendToken($Customer, $phoneNumber)
     {
         // ワンタイムトークン生成・保存
-        $token = $this->customerTwoFactorAuthService->generateOneTimeTokenValue(
-            (int) $this->eccubeConfig->get('plugin_eccube_2fa_sms_one_time_token_length')
-        );
+        $token = $this->customerTwoFactorAuthService->generateOneTimeTokenValue();
 
         $Customer->setTwoFactorAuthOneTimeToken($this->customerTwoFactorAuthService->hashOneTimeToken($token));
-        $Customer->setTwoFactorAuthOneTimeTokenExpire($this->customerTwoFactorAuthService->generateExpiryDate(
-            (int) $this->eccubeConfig->get('plugin_eccube_2fa_sms_one_time_token_expire_after_seconds')
-        ));
+        $Customer->setTwoFactorAuthOneTimeTokenExpire($this->customerTwoFactorAuthService->generateExpiryDate());
         $this->entityManager->persist($Customer);
         $this->entityManager->flush();
 
