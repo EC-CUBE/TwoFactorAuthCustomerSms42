@@ -17,10 +17,11 @@ use Doctrine\ORM\EntityManagerInterface;
 use Eccube\Entity\Layout;
 use Eccube\Entity\Page;
 use Eccube\Entity\PageLayout;
+use Eccube\Common\EccubeConfig;
 use Eccube\Plugin\AbstractPluginManager;
 use Plugin\TwoFactorAuthCustomer42\Entity\TwoFactorAuthConfig;
 use Plugin\TwoFactorAuthCustomer42\Entity\TwoFactorAuthType;
-use Symfony\Component\DependencyInjection\ContainerInterface;
+use Psr\Container\ContainerInterface;
 use Symfony\Component\Filesystem\Filesystem;
 
 /**
@@ -122,7 +123,7 @@ class PluginManager extends AbstractPluginManager
     protected function copyTwigFiles(ContainerInterface $container)
     {
         // テンプレートファイルコピー
-        $templatePath = $container->getParameter('eccube_theme_front_dir')
+        $templatePath = $container->get(EccubeConfig::class)->get('eccube_theme_front_dir')
             .'/TwoFactorAuthCustomerSms42/Resource/template/default';
         $fs = new Filesystem();
         if ($fs->exists($templatePath)) {
@@ -194,7 +195,7 @@ class PluginManager extends AbstractPluginManager
      */
     protected function removeTwigFiles(ContainerInterface $container)
     {
-        $templatePath = $container->getParameter('eccube_theme_front_dir')
+        $templatePath = $container->get(EccubeConfig::class)->get('eccube_theme_front_dir')
             .'/TwoFactorAuthCustomerSms42';
         $fs = new Filesystem();
         $fs->remove($templatePath);
