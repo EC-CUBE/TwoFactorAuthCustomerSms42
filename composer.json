@@ -1,6 +1,6 @@
 {
     "name": "ec-cube/twofactorauthcustomersms42",
-    "version": "1.0.0",
+    "version": "4.3.0",
     "description": "2 factor authentication for Customers(SMS) EC-CUBE42",
     "type": "eccube-plugin",
     "extra": {
