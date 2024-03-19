@@ -157,7 +157,7 @@ class TwoFactorAuthCustomerSmsController extends TwoFactorAuthCustomerController
         $now = new \DateTime();
 
         // フォームからのハッシュしたワンタイムパスワードとDBに保存しているワンタイムパスワードのハッシュは一致しているかどうか
-        if ($Customer->getTwoFactorAuthOneTimeToken() !== $this->customerTwoFactorAuthService->hashOneTimeToken($token)
+        if (!$this->customerTwoFactorAuthService->veriyOneTimeToken($Customer->getTwoFactorAuthOneTimeToken(), $token)
             || $Customer->getTwoFactorAuthOneTimeTokenExpire() < $now) {
             return false;
         }
