@@ -13,6 +13,7 @@
 
 namespace Plugin\TwoFactorAuthCustomerSms42\Controller;
 
+use Eccube\Common\Constant;
 use Eccube\Entity\Customer;
 use Plugin\TwoFactorAuthCustomer42\Controller\TwoFactorAuthCustomerController;
 use Plugin\TwoFactorAuthCustomer42\Form\Type\TwoFactorAuthPhoneNumberTypeCustomer;
@@ -157,9 +158,15 @@ class TwoFactorAuthCustomerSmsController extends TwoFactorAuthCustomerController
         $now = new \DateTime();
 
         // フォームからのハッシュしたワンタイムパスワードとDBに保存しているワンタイムパスワードのハッシュは一致しているかどうか
-        if (!$this->customerTwoFactorAuthService->veriyOneTimeToken($Customer->getTwoFactorAuthOneTimeToken(), $token)
+        if (version_compare(Constant::VERSION, '4.3', '>=') &&
+            !$this->customerTwoFactorAuthService->veriyOneTimeToken($Customer->getTwoFactorAuthOneTimeToken(), $token)
             || $Customer->getTwoFactorAuthOneTimeTokenExpire() < $now) {
             return false;
+        } else {
+            if ($Customer->getTwoFactorAuthOneTimeToken() !== $this->customerTwoFactorAuthService->hashOneTimeToken($token)
+                || $Customer->getTwoFactorAuthOneTimeTokenExpire() < $now) {
+                return false;
+            }
         }
 
         return true;
