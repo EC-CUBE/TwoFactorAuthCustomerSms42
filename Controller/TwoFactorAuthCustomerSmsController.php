@@ -156,20 +156,11 @@ class TwoFactorAuthCustomerSmsController extends TwoFactorAuthCustomerController
     private function checkToken(Customer $Customer, $token): bool
     {
         $now = new \DateTime();
+        $hashedToken = $Customer->getTwoFactorAuthOneTimeToken();
+        $expire = $Customer->getTwoFactorAuthOneTimeTokenExpire();
 
-        // フォームからのハッシュしたワンタイムパスワードとDBに保存しているワンタイムパスワードのハッシュは一致しているかどうか
-        if (version_compare(Constant::VERSION, '4.3', '>=') &&
-            !$this->customerTwoFactorAuthService->veriyOneTimeToken($Customer->getTwoFactorAuthOneTimeToken(), $token)
-            || $Customer->getTwoFactorAuthOneTimeTokenExpire() < $now) {
-            return false;
-        } else {
-            if ($Customer->getTwoFactorAuthOneTimeToken() !== $this->customerTwoFactorAuthService->hashOneTimeToken($token)
-                || $Customer->getTwoFactorAuthOneTimeTokenExpire() < $now) {
-                return false;
-            }
-        }
-
-        return true;
+        // トークン検証
+        return $this->customerTwoFactorAuthService->verifyOneTimeToken($hashedToken, $token) && $expire > $now;
     }
 
     /**
