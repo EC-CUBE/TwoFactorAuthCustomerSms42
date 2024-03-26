@@ -13,6 +13,7 @@
 
 namespace Plugin\TwoFactorAuthCustomerSms42\Controller;
 
+use Eccube\Common\Constant;
 use Eccube\Entity\Customer;
 use Plugin\TwoFactorAuthCustomer42\Controller\TwoFactorAuthCustomerController;
 use Plugin\TwoFactorAuthCustomer42\Form\Type\TwoFactorAuthPhoneNumberTypeCustomer;
@@ -155,14 +156,11 @@ class TwoFactorAuthCustomerSmsController extends TwoFactorAuthCustomerController
     private function checkToken(Customer $Customer, $token): bool
     {
         $now = new \DateTime();
+        $hashedToken = $Customer->getTwoFactorAuthOneTimeToken();
+        $expire = $Customer->getTwoFactorAuthOneTimeTokenExpire();
 
-        // フォームからのハッシュしたワンタイムパスワードとDBに保存しているワンタイムパスワードのハッシュは一致しているかどうか
-        if ($Customer->getTwoFactorAuthOneTimeToken() !== $this->customerTwoFactorAuthService->hashOneTimeToken($token)
-            || $Customer->getTwoFactorAuthOneTimeTokenExpire() < $now) {
-            return false;
-        }
-
-        return true;
+        // トークン検証
+        return $this->customerTwoFactorAuthService->verifyOneTimeToken($hashedToken, $token) && $expire > $now;
     }
 
     /**
